@@ -1,0 +1,129 @@
+Option Explicit
+
+' (Parse json string from url using VB6)
+
+'SANI: Key Variable
+Public generatedKey As String
+
+    'SANI: Get Key on button click
+    Private Sub btnKey_Click()
+    
+    'SANI: Defining variables
+    Dim JsonString As String
+    Dim keyUrl As String
+        
+    'SANI: URL from where getting Json String
+    keyUrl = "http://rims.punjab.gov.pk/api/databaseupdate/formkey"
+    JsonString = WebRequest(keyUrl)
+        
+    'SANI: Making object to read json
+    Dim JsonParse As Object
+    Set JsonParse = JSON.parse(JsonString)
+      
+    'SANI: Response from URL
+    generatedKey = JsonParse.Item("key")
+        
+    'SANI: Showing Json response in label
+    Lblkey.Caption = generatedKey
+
+ 
+End Sub
+
+Private Sub btnpost_Click()
+
+    'SANI: Defining variables
+    Dim responseString As String
+    Dim keyUrl As String
+    Dim result As String
+    Dim parameters As String
+    
+    Dim invoiceData As String
+    Dim invoiceDetailData As String
+    
+    'invoiceData = "YOUR JSON STRING AS PER STATED IN DOCUMENTATION"
+    
+    'SANI: URL from where getting Json String
+    keyUrl = "http://rims.punjab.gov.pk/api/databaseupdate/formdata"
+    
+   'parameters = "/?key=" & generatedKey & "&data=" & invoiceData
+   
+  ' parameters = "/?key=" & generatedKey & "&data={" & Chr$(34) & "pntn" & Chr$(34) & ":" & Chr$(34) & "25251490" & Chr$(34) & ", " & Chr$(34) & "branchcode" & Chr$(34) & ":" & Chr$(34) & "BR25251490496" & Chr$(34) & "}"
+   '"customer_name":"Sani","detail":[{"item_code":"34","item":"Piza","quantity":"1","unit_price":"725"},{"item_code":"23","item":"Korma","quantity":"12","unit_price":"185"}]}"
+   
+   parameters = "/?key=" & generatedKey & "" _
+   & "&data={" & Chr$(34) & "pntn" & Chr$(34) & ":" & Chr$(34) & "25251490" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "branchcode" & Chr$(34) & ":" & Chr$(34) & "BR25251490496" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "invoice_number" & Chr$(34) & ":" & Chr$(34) & "431-01" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "invoice_date" & Chr$(34) & ":" & Chr$(34) & "2015-08-04" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "invoice_time" & Chr$(34) & ":" & Chr$(34) & "02:41" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "discount_percent" & Chr$(34) & ":" & Chr$(34) & "2" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "service_charges_percent" & Chr$(34) & ":" & Chr$(34) & "3" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "tax_percent" & Chr$(34) & ":" & Chr$(34) & "16" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "table_no" & Chr$(34) & ":" & Chr$(34) & "34" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "phone" & Chr$(34) & ":" & Chr$(34) & "009234534534" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "customer_name" & Chr$(34) & ":" & Chr$(34) & "Sani Hyne" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "detail" & Chr$(34) & ":[{" _
+   & "" & Chr$(34) & "item_code" & Chr$(34) & ":" & Chr$(34) & "56" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "item" & Chr$(34) & ":" & Chr$(34) & "Piza" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "quantity" & Chr$(34) & ":" & Chr$(34) & "5" & Chr$(34) & "" _
+   & ", " & Chr$(34) & "unit_price" & Chr$(34) & ":" & Chr$(34) & "600" & Chr$(34) & "" _
+   & "}]" _
+   & "}"
+   
+   ' parameters = "/?key=" & generatedKey
+    keyUrl = keyUrl & parameters
+    responseString = WebPost(keyUrl, parameters)
+    
+    'SANI: Making object to read json
+    Dim JsonParse As Object
+    Set JsonParse = JSON.parse(responseString)
+    
+    'SANI: Response from URL
+    
+ '   result = JsonParse.Item("error")
+    
+    'SANI: Showing Json response in label
+    Lblresponse.Text = responseString
+    
+    'Lblresponse.Caption = keyUrl
+    
+End Sub
+
+'  SANI: GET REQUEST
+
+Public Function WebRequest(Url As String) As String
+    Dim http As MSXML2.XMLHTTP
+    Set http = CreateObject("MSXML2.ServerXMLHTTP")
+
+    http.Open "GET", Url, False
+    http.send
+
+    WebRequest = http.responseText
+    Set http = Nothing
+End Function
+
+
+' SANI: POST REQUEST (Post data to url using VB6)
+
+Public Function WebPost(Url As String, Param As String) As String
+    
+    Dim http As MSXML2.XMLHTTP
+    Set http = CreateObject("MSXML2.ServerXMLHTTP")
+
+    http.Open "POST", Url, False
+    http.send (Param)
+
+    WebPost = http.responseText
+    Set http = Nothing
+
+End Function
+
+
+Private Sub Text1_Change()
+
+End Sub
+    
+	
+ 
+ 
+ 
